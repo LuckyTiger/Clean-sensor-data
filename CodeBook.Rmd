@@ -1,0 +1,61 @@
+---
+title: "CodeBook"
+author: "JeffLi"
+date: "November 18, 2014"
+output: html_document
+---
+
+## Data Description
+The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years. Each person performed six activities (`WALKING`, `WALKING_UPSTAIRS`, `WALKING_DOWNSTAIRS`, `SITTING`, `STANDING`, `LAYING`) wearing a smartphone (Samsung Galaxy S II) on the waist. Using its embedded accelerometer and gyroscope, we captured 3-axial linear acceleration and 3-axial angular velocity at a constant rate of 50Hz. The experiments have been video-recorded to label the data manually. The obtained dataset has been randomly partitioned into two sets, where 70% of the volunteers was selected for generating the training data and 30% the test data. 
+
+1.First row of the Code, indicates that this project need package "dplyr", if you don't have one, install it.
+```{r}
+require(dplyr)
+```
+
+2.Then, use method `read.table` to read data from txt files, and store them in variables.
+```{r}
+features <- read.table("UCI HAR Dataset/features.txt")
+activity_label <- read.table("UCI HAR Dataset/activity_labels.txt")
+train_set <- read.table("UCI HAR Dataset/train/X_train.txt")
+train_subject <- read.table("UCI HAR Dataset/train/subject_train.txt")
+train_label <- read.table("UCI HAR Dataset/train/y_train.txt")
+test_set <- read.table("UCI HAR Dataset/test/X_test.txt")
+test_subject <- read.table("UCI HAR Dataset/test/subject_test.txt")
+test_label <- read.table("UCI HAR Dataset/test/y_test.txt")
+```
+
+3.Give those variables in these data sets with appropriately labels
+```{r}
+names(train_set) <- features$V2
+names(train_subject)<-"Subject"
+names(train_label) <- "Activity"
+names(test_set) <- features$V2
+names(test_subject)<-"Subject"
+names(test_label) <- "Activity"
+```
+
+4. Extracts only the measurements on the mean and standard deviation for each measurement. And use `rbind` command to merge them.
+```{r}
+train_set_part <- train_set[,grepl("mean|std",names(train_set))]
+test_set_part <- test_set[,grepl("mean|std",names(test_set))]
+train_data <- cbind(train_subject,train_label,train_set_part)
+test_data <- cbind(test_subject,test_label,test_set_part)
+data <- rbind(train_data,test_data)
+```
+
+5. Give those activity with descriptive activity names. And write those tidydata into tidydata.txt in your workspace
+```{r}
+data$Activity <- activity_label[data$Activity,][,2]
+write.table(data, "tidydata.txt")
+```
+
+6.Finally, Let's see what's the processed data look like
+```{r}
+head(data[,1:5])
+```
+
+
+
+
+
