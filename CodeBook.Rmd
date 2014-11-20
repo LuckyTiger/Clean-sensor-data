@@ -2,7 +2,9 @@
 title: "CodeBook"
 author: "JeffLi"
 date: "November 18, 2014"
-output: html_document
+output:
+  html_document:
+    keep_md: yes
 ---
 
 ## Data Description
@@ -53,6 +55,14 @@ write.table(data, "tidydata.txt")
 6.Finally, Let's see what's the processed data look like
 ```{r}
 head(data[,1:5])
+```
+
+7. One more thing, as the fifth project require, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+```{r}
+data_tbl <- tbl_df(data)
+by_subact <- group_by(data_tbl, Subject, Activity)
+result <- summarise_each(by_subact, funs(mean))
+write.table(data, "SummariseBySubjectAndAct.txt", col.names = FALSE)
 ```
 
 
